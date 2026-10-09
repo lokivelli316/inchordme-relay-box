@@ -10,7 +10,7 @@
 (function(){
 'use strict';
 if(document.body.dataset.view!=='switchyard')return;
-var ready={left:false,right:false},lastIds={left:'',right:''};
+var ready={left:false,right:false},transferIds={left:new Set(),right:new Set()};
 var regKey='lokivelli.switchyard.v1';
 var $=function(id){return document.getElementById(id);};
 function current(){try{return JSON.parse(localStorage.getItem(regKey)||'{}');}catch(e){return {};}}
@@ -35,8 +35,8 @@ window.addEventListener('message',function(event){
    if(data.type==='LV_SWITCHYARD_READY'&&data.version===1){
      ready[side]=true;setFoot(side,'BRIDGE READY · '+event.origin+' · user-approved transfers only');
    }
-   if(data.type==='LV_SWITCHYARD_ACK'&&data.version===1&&data.transferId===lastIds[side]){
-     setFoot(side,(data.accepted?'RECEIVED · ':'REJECTED · ')+(data.fileName||'artifact')+' · '+event.origin);
+   if(data.type==='LV_SWITCHYARD_ACK'&&data.version===1&&transferIds[side].has(data.transferId)){
+     transferIds[side].delete(data.transferId);setFoot(side,(data.accepted?'RECEIVED · ':'REJECTED · ')+(data.fileName||'artifact')+' · '+event.origin);
    }
  }
 });
@@ -55,7 +55,7 @@ async function deliver(side){
  for(var cb of checks){
    var file=map[cb.value];if(!file)continue;
    var tid=crypto.randomUUID?crypto.randomUUID():String(Date.now())+'-'+Math.random();
-   lastIds[side]=tid;
+   transferIds[side].add(tid);
    frame.contentWindow.postMessage({
      type:'LV_SWITCHYARD_FILE',version:1,transferId:tid,sourceOrigin:location.origin,
      name:file.name,size:file.size,mimeType:file.type||'application/octet-stream',
