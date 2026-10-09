@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#11131b">
+  <title>LOKIVELLI // SWITCHYARD — Wiring Deck</title>
+  <link rel="stylesheet" href="./assets/switchyard.css">
+  <script src="./assets/switchyard.js" defer></script>
+</head>
+<body data-view="switchyard">
+  <div class="shell">
+    <header class="top">
+      <div class="brand"><div class="sigil">L<span>∕</span>V</div><div><div class="superline">LOKIVELLI // INCHORDME RELAY BOX</div><h1>SWITCHYARD <em>WIRING DECK</em></h1></div></div>
+      <div class="topbuttons"><span class="status"><b class="pulse"></b> LOCAL-FIRST</span><button id="vaultToggle" class="button">ARTIFACT RAIL</button><a class="button outline" href="https://github.com/lokivelli316/inchordme-relay-box" target="_blank" rel="noopener">SOURCE ↗</a></div>
+    </header>
+    <div class="intro"><strong>TWO INDEPENDENT BAYS.</strong> Each platform owns its own workspace page. Wire two pages together; relay references and attachments only when you choose. <span>No fake OAuth. No embedded-provider promises.</span></div>
+
+    <div class="controlbar">
+      <div class="picker"><label for="leftPlatform">01 / LEFT BAY</label><select id="leftPlatform"></select></div>
+      <div class="division"><label for="split">SPLIT <strong id="ratioText">50 / 50</strong></label><input id="split" type="range" min="25" max="75" value="50" aria-label="Left pane width"></div>
+      <div class="picker"><label for="rightPlatform">02 / RIGHT BAY</label><select id="rightPlatform"></select></div>
+      <button id="swap" class="button hot" title="Swap which platform is in which bay">⇆ SWAP</button>
+      <button id="layout" class="button" title="Keep two bays visible on narrow screens">FORCE 2-UP</button>
+    </div>
+
+    <main class="stage" id="stage">
+      <section class="pane" id="paneLeft" aria-label="Left platform bay">
+        <div class="paneTop"><span class="lamp"></span><strong id="leftTitle">LEFT BAY</strong><span class="spacer"></span><button data-side="left" data-action="local" class="mini active">OWN PAGE</button><button data-side="left" data-action="embed" class="mini">SITE FRAME</button><button data-side="left" data-action="popout" class="mini link">OPEN ↗</button></div>
+        <iframe title="Left provider workspace" id="leftFrame" referrerpolicy="no-referrer" loading="eager"></iframe>
+        <div class="paneFoot" id="leftFoot">Ready. Artifact handoffs remain inside the Switchyard until explicitly accepted.</div>
+      </section>
+      <div class="wiring"><span>RELAY</span><span>⇄</span><span>RAIL</span></div>
+      <section class="pane" id="paneRight" aria-label="Right platform bay">
+        <div class="paneTop"><span class="lamp"></span><strong id="rightTitle">RIGHT BAY</strong><span class="spacer"></span><button data-side="right" data-action="local" class="mini active">OWN PAGE</button><button data-side="right" data-action="embed" class="mini">SITE FRAME</button><button data-side="right" data-action="popout" class="mini link">OPEN ↗</button></div>
+        <iframe title="Right provider workspace" id="rightFrame" referrerpolicy="no-referrer" loading="eager"></iframe>
+        <div class="paneFoot" id="rightFoot">Separate storage tray and notes. Shared file bytes, explicit transfer record.</div>
+      </section>
+    </main>
+
+    <section class="rail" id="rail" aria-label="Attachment relay">
+      <div class="railHead"><div><div class="superline">ATTACHMENT PUSHER // LOCAL VAULT</div><h2>THE RELAY RAIL <span id="storageStat">• OFFLINE CAPABLE</span></h2></div><div class="railActions"><label class="button hot uploadButton">+ ADD FILES<input id="uploadFiles" type="file" multiple hidden></label><button class="button" id="pushLeft">← PUSH LEFT</button><button class="button" id="pushRight">PUSH RIGHT →</button></div></div>
+      <div class="drop" id="dropZone">DROP FILES HERE / OR SELECT FROM YOUR VAULT & PUSH TO A BAY <span>Direct injection into external consumer AI chats is not supported. Recipient trays are real; delivery to external apps needs their approved integration or an upload by you.</span></div>
+      <div id="vaultItems" class="filelist"><p class="empty">No files in this browser vault. Add once to relay between the two owned bay pages.</p></div>
+      <div class="railFoot">FILES: browser IndexedDB on this device/profile. Transfers: same-site delivery records. SHA-256: recorded when available. <strong>Not cloud synced; not an external AI attachment injector.</strong></div>
+    </section>
+
+    <section class="settings">
+      <details id="settings"><summary>⚙ WIRING / PAGE REGISTRY / OAUTH STATUS <small>Configure each page once</small></summary>
+        <div class="settingsInner">
+          <h2>Platform pages</h2><p>Each platform gets its own independent page. Change its external URL to any site it builds for you. The SITE FRAME option attempts embedding; if the platform blocks framing, use OPEN ↗ instead.</p>
+          <div id="endpointRows" class="endpoints"></div>
+          <button id="saveEndpoints" class="button hot">SAVE PAGE WIRING</button>
+          <h2>OAuth connector rail</h2><p>GitHub Pages is static. Real OAuth file access needs an approved server-side authorization exchange and appropriate provider registration. Until that exists, these indicators remain <b>NOT CONNECTED</b> instead of falsely claiming access. No API keys are exposed in page source.</p>
+          <div class="authGrid">
+            <div><b>GITHUB</b><span class="disconnected">NOT CONNECTED</span><small>Repository access through a configured OAuth backend</small></div>
+            <div><b>GOOGLE DRIVE</b><span class="disconnected">NOT CONNECTED</span><small>Authorized file read/write through a configured OAuth backend</small></div>
+            <div><b>DROPBOX</b><span class="disconnected">NOT CONNECTED</span><small>Authorized file read/write through a configured OAuth backend</small></div>
+          </div>
+          <label class="relayLabel" for="relayUrl">OPTIONAL AUTHORIZED RELAY BACKEND URL</label>
+          <div class="relayRow"><input id="relayUrl" type="url" placeholder="https://your-authorized-relay.example" spellcheck="false"><button class="button" id="saveRelay">SAVE RELAY URL</button><button class="button hot" id="checkRelay">CHECK STATUS</button></div>
+          <p id="relayStatus" class="muted">No OAuth relay is configured. Browser vault and bay-to-bay transfers work without it.</p>
+          <p class="muted">For protected platforms like ChatGPT, Claude, Gemini and Grok, signing into their own websites does not authorize this site to read conversations or push uploads. They retain independent auth sessions in their browser windows.</p>
+        </div>
+      </details>
+    </section>
+    <footer>LOKIVELLI FORGE / INCHORDME RELAY BOX <span>BUILDER ≠ AUDITOR ≠ ARCHITECT &nbsp;•&nbsp; KEEP THE RECEIPTS</span></footer>
+  </div>
+  <div id="toast" role="status" aria-live="polite"></div>
+</body>
+</html>
