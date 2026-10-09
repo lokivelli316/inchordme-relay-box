@@ -28,7 +28,7 @@
   function formatBytes(bytes) { if(bytes<1024)return bytes+' B'; if(bytes<1048576)return (bytes/1024).toFixed(1)+' KB';return (bytes/1048576).toFixed(1)+' MB'; }
   function notify(s) { var t=$('toast');if(t){t.textContent=s;t.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(function(){t.classList.remove('show');},4000);}else{ var box=$('bayMessage');if(box)box.textContent=s; } }
   function broadcast(reason) {if(bus)bus.postMessage({event:reason,at:Date.now()});}
-  function urlFor(id) {return urls[id] || getItem(id).url;}
+  function urlFor(id) {return urls[id] || (id==='custom' ? new URL('./bridge-test/',location.href).href : getItem(id).url);}
   function validUrl(value){try{ var v=new URL(value);return ['https:','http:'].includes(v.protocol) ? v.href : null;}catch(e){return null;}}
   function openDatabase() {
     if(!dbPromise) dbPromise=new Promise(function(resolve,reject){
