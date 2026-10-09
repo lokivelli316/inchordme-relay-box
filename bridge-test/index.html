@@ -1,0 +1,33 @@
+<!doctype html><html lang="en">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>LOKIVELLI · Bridge Test Receiver</title>
+<link rel="stylesheet" href="../assets/switchyard.css">
+<style>body{--accent:#e6c477;padding:28px}.panel{max-width:740px;margin:auto;background:#181b26;border:1px solid #a68862;padding:24px}#lv-receiver-status{color:#7cefcf;border:1px solid #547469;padding:10px;background:#172b2b}.received{padding:10px;border-bottom:1px solid #454758}.received strong,.received small{display:block}.received small{color:#afa6b6}.received button{margin-top:7px}h1{color:#e6c477}.muted{color:#bcb6bc;font-size:12px}</style></head>
+<body><main class="panel"><div class="superline">INCHORDME / BRIDGE SELF TEST</div><h1>INDEPENDENT RECEIVER</h1>
+<p>Use this page in the Wiring Deck's CUSTOM SITE &rarr; SITE FRAME. Push a small test file to that bay. This test receiver explicitly asks for approval and keeps accepted files in its own IndexedDB inbox.</p>
+<p class="muted">This test proves the consensual browser-to-browser bridge; it does not grant OAuth or access to any external AI conversation.</p>
+<div id="lv-receiver-status">Waiting for Switchyard handshake...</div>
+<h2>ACCEPTED INBOX</h2><div id="received"><p class="empty">Nothing received yet.</p></div>
+<button class="button" id="refresh">REFRESH</button>
+</main>
+<script>window.LV_ALLOWED_SWITCHYARD_ORIGINS=[window.location.origin];</script>
+<script src="../assets/receiver-starter.js"></script>
+<script>
+async function draw(){
+ try{
+   const arr=await window.LVReceiverList(),holder=document.getElementById('received');
+   holder.replaceChildren();
+   if(!arr.length){holder.textContent='No accepted files yet.';return;}
+   arr.sort((a,b)=>b.receivedAt-a.receivedAt);
+   for(const f of arr){
+     const div=document.createElement('div');div.className='received';
+     const name=document.createElement('strong');name.textContent=f.name;div.append(name);
+     const info=document.createElement('small');info.textContent='Origin: '+f.sourceOrigin+' · '+f.size+' B · '+(f.sha256||'no SHA');div.append(info);
+     const btn=document.createElement('button');btn.className='button';btn.textContent='DOWNLOAD COPY';
+     btn.onclick=()=>{const u=URL.createObjectURL(f.blob),a=document.createElement('a');a.href=u;a.download=f.name;a.click();setTimeout(()=>URL.revokeObjectURL(u),30000);};
+     div.append(btn);holder.append(div);
+   }
+ }catch(e){document.getElementById('received').textContent=e.message;}
+}
+document.getElementById('refresh').addEventListener('click',draw);
+window.addEventListener('lv:received',draw);draw();
+</script></body></html>
